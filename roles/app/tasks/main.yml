@@ -1,0 +1,31 @@
+---
+- name: Install Flask
+  apt:
+    name: python3-flask
+    state: present
+    update_cache: yes
+
+- name: Create app directory
+  file:
+    path: /opt/flaskapp
+    state: directory
+
+- name: Deploy Flask app
+  template:
+    src: app.py.j2
+    dest: /opt/flaskapp/app.py
+
+- name: Deploy systemd service
+  template:
+    src: flask.service.j2
+    dest: /etc/systemd/system/flask.service
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Start Flask service
+  service:
+    name: flask
+    state: started
+    enabled: yes
